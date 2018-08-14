@@ -10,4 +10,6 @@ FILE CHANGE PROOCEDURE - TEAM 3
 
 Any changes made is subject to review. If you want to double check you can redownload the SP1 and see if the online version is identical to your computer's version.
 
+Don't worry if there are some differences in the Debug files. These files do not have to be same because each contributor has a different debugging history.
+
 Good luck have fun.
