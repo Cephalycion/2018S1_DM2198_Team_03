@@ -299,12 +299,12 @@ void titleLogic()
 		bSomethingHappened = true;
 	}
 
-	if ((g_abKeyPressed[K_SPACE] && titleChoice == 0))
+	if ((g_abKeyPressed[K_SPACE]) && (titleChoice == 0))
 	{
 		g_eGameState = S_LEVELS;
 	}
 
-	if ((g_abKeyPressed[K_SPACE] && titleChoice == 1))
+	if ((g_abKeyPressed[K_SPACE]) && (titleChoice == 1))
 	{
 		; // pending further code for custom map editor
 	}
