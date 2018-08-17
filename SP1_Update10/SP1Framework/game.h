@@ -25,7 +25,6 @@ enum EGAMESTATES
 {
 	S_DEATH,
     S_SPLASHSCREEN,
-	S_ENDSCREEN,
     S_GAME,
     S_COUNT,
 	S_TITLE,  // title screen to display after splash screen
@@ -74,13 +73,9 @@ void titleLogic();
 void titleRender();
 void levelsLogic();
 void levelsRender();
-void customLogic();
-void customRender();
-void endLogic();
-void endRender();
 
-void deathRender();         // displays death screen
-void deathLogic();
+void deathScreen();         // displays death screen
+void deathScreenWait();
 void deathReset();
 
 #endif // _GAME_H
