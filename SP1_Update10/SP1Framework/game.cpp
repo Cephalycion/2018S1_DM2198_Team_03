@@ -48,7 +48,11 @@ string m2 = "Map_02.txt";
 string m3 = "Map_03.txt";
 string m4 = "Map_04.txt";
 string m5 = "Map_05.txt";
+string death = "death.txt";
+string ending = "Game_end.txt";
 string splash = "Splash_Screen.txt";
+string custom = "CMap_Template.txt";
+string title = "title.txt";
 
 int titleChoice = 0; // init to 0
 int levelChoice = 0; // init to 0
@@ -82,6 +86,7 @@ void splashLoading(string splashString)
 	}
 	splashDataFile.close();
 }
+
 void mapLoading(string stringMap)
 {
 	string LineData;
@@ -129,16 +134,14 @@ void init( void )
 
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
-
-	// initialise with the tutorial map
-	mapLoading(m0);
+	
 	splashLoading(splash);
 
-	g_sSelectort.m_cLocation.Y = 10;
-	g_sSelectort.m_cLocation.X = 29;
+	g_sSelectort.m_cLocation.Y = 20;
+	g_sSelectort.m_cLocation.X = 31;
 
-	g_sSelectorl.m_cLocation.Y = 10;
-	g_sSelectorl.m_cLocation.X = 29;
+	g_sSelectorl.m_cLocation.Y = 7;
+	g_sSelectorl.m_cLocation.X = 33;
 }
 
 //--------------------------------------------------------------
@@ -201,11 +204,15 @@ void update(double dt)
     {
         case S_SPLASHSCREEN : splashScreenWait(); // game logic for the splash screen
             break;
+		case S_ENDSCREEN: endLogic();
+			break;
 		case S_TITLE: titleLogic(); // logic for title
 			break;
 		case S_LEVELS: levelsLogic();
 			break;
-		case S_DEATH: deathScreenWait(); // game logic for the death screen
+		case S_CUSTOM: customLogic();
+			break;
+		case S_DEATH: deathLogic(); // game logic for the death screen
 			break;
         case S_GAME: gameplay(); // gameplay logic when we are in the game
             break;
@@ -226,11 +233,15 @@ void render()
     {
         case S_SPLASHSCREEN: renderSplashScreen();
             break;
-		case S_DEATH: deathScreen();
+		case S_ENDSCREEN: endRender();
+			break;
+		case S_DEATH: deathRender();
 			break;
 		case S_TITLE: titleRender();
 			break;
 		case S_LEVELS: levelsRender();
+			break;
+		case S_CUSTOM: customRender();
 			break;
         case S_GAME: renderGame();
             break;
@@ -243,6 +254,30 @@ void splashScreenWait()    // waits for time to pass in splash screen
 {
     if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to game mode, else do nothing
         g_eGameState = S_TITLE;
+}
+
+void endLogic()
+{
+	bool bSomethingHappened = false;
+	if (g_dBounceTime > g_dElapsedTime)
+		return;
+
+	if (g_abKeyPressed[K_SPACE])
+	{
+		g_eGameState = S_TITLE;
+		bSomethingHappened = true;
+	}
+
+	if (g_abKeyPressed[K_ESCAPE])
+	{
+		g_bQuitGame = true;
+	}
+
+	if (bSomethingHappened)
+	{
+		// set the bounce time to some time in the future to prevent accidental triggers
+		g_dBounceTime = g_dElapsedTime + 0.1; // 125ms should be enough
+	}
 }
 
 void levelsLogic()
@@ -265,8 +300,37 @@ void levelsLogic()
 		bSomethingHappened = true;
 	}
 
+	if (g_abKeyPressed[K_ESCAPE])
+	{
+		bSomethingHappened = true;
+		g_eGameState = S_TITLE;
+	}
+
 	if (g_abKeyPressed[K_SPACE])
 	{
+		switch (levelChoice)
+		{
+		case 0:
+			mapLoading(m0);
+			break;
+		case 1:
+			mapLoading(m1);
+			break;
+		case 2:
+			mapLoading(m2);
+			break;
+		case 3:
+			mapLoading(m3);
+			break;
+		case 4:
+			mapLoading(m4);
+			break;
+		case 5:
+			mapLoading(m5);
+			break;
+		default:
+			break;
+		}
 		whichMap = levelChoice;
 		g_eGameState = S_GAME;
 	}
@@ -274,8 +338,13 @@ void levelsLogic()
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
-		g_dBounceTime = g_dElapsedTime + 0.1; // 125ms should be enough
+		g_dBounceTime = g_dElapsedTime + 0.2;
 	}
+}
+
+void customLogic()
+{
+	;
 }
 
 void titleLogic()
@@ -301,31 +370,50 @@ void titleLogic()
 
 	if ((g_abKeyPressed[K_SPACE]) && (titleChoice == 0))
 	{
+		bSomethingHappened = true;
 		g_eGameState = S_LEVELS;
 	}
 
 	if ((g_abKeyPressed[K_SPACE]) && (titleChoice == 1))
 	{
-		; // pending further code for custom map editor
+		bSomethingHappened = true;
+		g_eGameState = S_CUSTOM;
+	}
+
+	if (g_abKeyPressed[K_ESCAPE])
+	{
+		g_bQuitGame = true;
+	}
+
+	if (bSomethingHappened)
+	{
+		// set the bounce time to some time in the future to prevent accidental triggers
+		g_dBounceTime = g_dElapsedTime + 0.2;
+	}
+}
+
+void deathLogic()
+{
+	bool bSomethingHappened = false;
+	if (g_dBounceTime > g_dElapsedTime)
+		return;
+
+	if (g_abKeyPressed[K_SPACE])
+	{
+		bSomethingHappened = true;
+		g_eGameState = S_GAME;
+	}
+
+	if (g_abKeyPressed[K_ESCAPE])
+	{
+		bSomethingHappened = true;
+		g_eGameState = S_TITLE;
 	}
 
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
 		g_dBounceTime = g_dElapsedTime + 0.1; // 125ms should be enough
-	}
-}
-
-void deathScreenWait()
-{
-	if (g_abKeyPressed[K_SPACE])
-	{
-		g_eGameState = S_GAME;
-	}
-
-	if (g_abKeyPressed[K_ESCAPE])
-	{
-		g_bQuitGame = true;
 	}
 }
 
@@ -449,6 +537,10 @@ void gameplay()         // gameplay logic
 		case 5:
 			mapLoading(m5);
 			break;
+		case 6:
+			splashLoading(ending);
+			g_eGameState = S_ENDSCREEN;
+			break;
 		default:
 			break;
 		}
@@ -553,9 +645,25 @@ void moveCharacter()
 
 void processUserInput()
 {
-    // quits the game if player hits the escape key
-    if (g_abKeyPressed[K_ESCAPE])
-        g_bQuitGame = true;    
+	bool bSomethingHappened = false;
+	if (g_dBounceTime > g_dElapsedTime)
+		return;
+
+    // change to level select if player hits the escape key
+	if (g_abKeyPressed[K_ESCAPE])
+	{
+
+		monsterRenderOrNot = 0;
+		spawnedOrNot = 0;
+		bSomethingHappened = true;
+		g_eGameState = S_TITLE;
+	}
+
+	if (bSomethingHappened)
+	{
+		// set the bounce time to some time in the future to prevent accidental triggers
+		g_dBounceTime = g_dElapsedTime + 0.2;
+	}
 }
 
 void clearScreen()
@@ -564,11 +672,19 @@ void clearScreen()
     g_Console.clearBuffer(0x00);
 }
 
+void endRender()
+{
+	splashLoading(ending);
+	renderSplashScreen();
+}
+
 void levelsRender()
 {
 	COORD c = g_Console.getConsoleSize();
-	c.Y = 10;
-	c.X = 31;
+	c.Y = 7;
+	c.X = 35;
+	g_Console.writeToBuffer(c, "TUTORIAL", FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+	c.Y += 2;
 	g_Console.writeToBuffer(c, "LEVEL I", FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
 	c.Y += 2;
 	g_Console.writeToBuffer(c, "LEVEL II", FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
@@ -582,30 +698,23 @@ void levelsRender()
 	g_Console.writeToBuffer(g_sSelectorl.m_cLocation, '>', FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
 }
 
+void customRender()
+{
+	mapLoading(custom);
+	renderMap();
+}
+
 void titleRender()
 {
-	COORD c = g_Console.getConsoleSize();
-	c.Y = 10;
-	c.X = 31;
-	g_Console.writeToBuffer(c, "LEVEL SELECT", FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
-	c.Y += 2;
-	g_Console.writeToBuffer(c, "CUSTOM MAP EDITOR", FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
-
+	splashLoading(title);
+	renderSplashScreen();
 	g_Console.writeToBuffer(g_sSelectort.m_cLocation, '>', FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
 }
 
-void deathScreen()
+void deathRender()
 {
-	COORD c = g_Console.getConsoleSize();
-	c.Y /= 3;
-	c.X = c.X / 2 - 11;
-	g_Console.writeToBuffer(c, "You should leave. Now.", FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
-	c.Y += 8;
-	c.X -= 12;
-	g_Console.writeToBuffer(c, "Press the <SPACE> key to restart at checkpoint", FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
-	c.Y += 1;
-	c.X += 5;
-	g_Console.writeToBuffer(c, "Press the <ESC> key to quit the game", FOREGROUND_GREEN | FOREGROUND_BLUE | FOREGROUND_RED);
+	splashLoading(death);
+	renderSplashScreen();
 }
 
 void renderSplashScreen()  // renders the splash screen
