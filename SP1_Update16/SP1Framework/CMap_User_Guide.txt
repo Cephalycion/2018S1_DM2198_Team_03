@@ -1,0 +1,27 @@
+################################################################################
+#############################MAP EDITOR INSTRUCTIONS############################
+################################################################################
+#####################Use ARROW KEYS to move the blue cursor#####################
+##################Use usual keyboard controls to input objects##################
+############Use SPACE to toggle between building and simulation modes###########
+################################################################################
+########Whenever you simulate your level, it is saved into the game files!######
+########You can find the data under CMap_Template.txt in the root folder.#######
+################################################################################
+########INPUT#|#PURPOSE#########################################################
+####**********|*************************************************************####
+############@#|#Player spawns here. Only 1 is allowed per map.##################
+############^#|#This represents the end goal of the level.######################
+############-#|#Spacing for players to freely walk through.#####################
+############+#|#Monster that moves up or down.##################################
+############=#|#Monster that moves left or right.###############################
+############%#|#Monster that moves left relative to its previous direction.#####
+############$#|#Monster that moves right relative to its previous direction.####
+####0,2,4,6,8#|#Buttons that reveals the below numbers when pressed.############
+####1,3,5,7,9#|#Will turn into empty spaces when buttons are pressed.###########
+############<#|#Entry point of teleporter#######################################
+############>#|#Exit point of teleporter. Only 1 is allowed per map.############
+############!#|#Walls that block player and monster movement.###################
+################################################################################
+################################################################################
+################################################################################
